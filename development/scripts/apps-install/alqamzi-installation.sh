@@ -1,7 +1,8 @@
 #!/bin/bash
+set -euo pipefail
 
-SITE_NAME="alqamzi.localhost"
-BENCH_DIR="/mnt/data/frappe-bench"
+SITE_NAME="${SITE_NAME:-alqamzi.localhost}"
+BENCH_DIR="${BENCH_DIR:-/workspace/development/frappe-bench}"
 
 cd "$BENCH_DIR" || exit 1
 
