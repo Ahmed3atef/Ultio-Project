@@ -185,8 +185,6 @@ install_apps() {
 
     cprint 2 "Installing Apps..."
 
-    chmod +x "$GET_APPS_SCRIPT"
-
     BENCH_DIR="$BENCH_PATH" bash "$GET_APPS_SCRIPT"
 }
 
