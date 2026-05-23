@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BENCH_DIR="/mnt/data/frappe-bench"
+BENCH_DIR="${BENCH_DIR:-/workspace/development/frappe-bench}"
 APPS_DIR="$BENCH_DIR/apps"
 APPS_TXT="$BENCH_DIR/sites/apps.txt"
 
