@@ -1,7 +1,7 @@
 # Ultio Project
 
 ### Pre-requisites
-this docker use blow 
+this docker use below 
 
 - bench image tag `v5.27.0`
 - frappe `version-15` with all github tags for this branch
@@ -11,6 +11,7 @@ this docker use blow
 
 ## How to Use
 
+* don't forget to make ssh key and insert it to gitlab settings for your account
 * firs clone this repo on your host machine 
 * open vscode in the repo path `code .`
 * make sure you have [VSCode Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
