@@ -78,27 +78,27 @@ get_app() {
                 exit 1
             fi
         fi
+
+        # Install the Python package
+        echo -e "${YELLOW}Installing $FOLDER_NAME into bench (pip)...${NC}"
+        cd "$BENCH_DIR" && bench pip install -e "apps/$FOLDER_NAME"
+
+        if [ $? -ne 0 ]; then
+            echo -e "${RED}✘ Failed pip install: $FOLDER_NAME${NC}"
+            echo -e "${RED}Stopping script. Fix the error and re-run.${NC}"
+            exit 1
+        fi
+
+        # Register app in apps.txt if not already there
+        if ! grep -qx "$FOLDER_NAME" "$APPS_TXT"; then
+            echo "$FOLDER_NAME" >> "$APPS_TXT"
+            echo -e "${GREEN}✔ Added '$FOLDER_NAME' to apps.txt${NC}"
+        else
+            echo -e "${YELLOW}⚠ '$FOLDER_NAME' already in apps.txt. Skipping.${NC}"
+        fi
+
+        echo -e "${GREEN}✔ $FOLDER_NAME done${NC}"
     fi
-
-    # Install the Python package
-    echo -e "${YELLOW}Installing $FOLDER_NAME into bench (pip)...${NC}"
-    cd "$BENCH_DIR" && bench pip install -e "apps/$FOLDER_NAME"
-
-    if [ $? -ne 0 ]; then
-        echo -e "${RED}✘ Failed pip install: $FOLDER_NAME${NC}"
-        echo -e "${RED}Stopping script. Fix the error and re-run.${NC}"
-        exit 1
-    fi
-
-    # Register app in apps.txt if not already there
-    if ! grep -qx "$FOLDER_NAME" "$APPS_TXT"; then
-        echo "$FOLDER_NAME" >> "$APPS_TXT"
-        echo -e "${GREEN}✔ Added '$FOLDER_NAME' to apps.txt${NC}"
-    else
-        echo -e "${YELLOW}⚠ '$FOLDER_NAME' already in apps.txt. Skipping.${NC}"
-    fi
-
-    echo -e "${GREEN}✔ $FOLDER_NAME done${NC}"
 }
 
 # ── Public apps (URL auto-derived from frappe GitHub org) ────────────────────

@@ -189,65 +189,98 @@ install_apps() {
 }
 
 # ============================================
-# Create Site
+# Create Sites From apps-install
 # ============================================
 
 create_site() {
 
-    pushd "$BENCH_PATH" > /dev/null
+    local APPS_INSTALL_DIR="/workspace/development/scripts/apps-install"
 
-    local DB_HOST=""
-    local CMD=()
-
-    if [[ "$DB_TYPE" == "mariadb" ]]; then
-
-        DB_HOST="mariadb"
-
-        run_bench_config "db_host" "$DB_HOST" "-g"
-
-        CMD=(
-            bench new-site
-            --db-root-username=root
-            --db-root-password=123
-            --db-host="$DB_HOST"
-            --db-type="$DB_TYPE"
-            --mariadb-user-host-login-scope=%
-            --admin-password="$ADMIN_PASSWORD"
-        )
-
-    else
-
-        DB_HOST="postgresql"
-
-        run_bench_config "db_host" "$DB_HOST" "-g"
-
-        CMD=(
-            bench new-site
-            --db-root-username=root
-            --db-root-password=123
-            --db-host="$DB_HOST"
-            --db-type="$DB_TYPE"
-            --admin-password="$ADMIN_PASSWORD"
-        )
+    if [[ ! -d "$APPS_INSTALL_DIR" ]]; then
+        cprint 1 "apps-install directory not found:"
+        cprint 1 "$APPS_INSTALL_DIR"
+        exit 1
     fi
 
-    # Auto install all apps inside apps/
-    for app_path in apps/*; do
+    pushd "$BENCH_PATH" > /dev/null
 
-        app_name="$(basename "$app_path")"
+    for installer in "$APPS_INSTALL_DIR"/*.sh; do
 
-        if [[ "$app_name" == "frappe" ]]; then
-            continue
+        [[ -f "$installer" ]] || continue
+
+        cprint 2 "========================================"
+        cprint 2 "Processing: $(basename "$installer")"
+        cprint 2 "========================================"
+
+        # Generate site name from filename
+        filename="$(basename "$installer")"
+
+        site_name="${filename%-installation.sh}.localhost"
+
+        if [[ -z "$site_name" ]]; then
+            cprint 1 "SITE_NAME not found in:"
+            cprint 1 "$installer"
+            exit 1
         fi
 
-        CMD+=(--install-app="$app_name")
+        cprint 2 "Detected Site: $site_name"
+
+        # Skip if site already exists
+        if [[ -d "$BENCH_PATH/sites/$site_name" ]]; then
+            cprint 3 "Site already exists: $site_name"
+        else
+
+            local DB_HOST=""
+            local CMD=()
+
+            if [[ "$DB_TYPE" == "mariadb" ]]; then
+
+                DB_HOST="mariadb"
+
+                run_bench_config "db_host" "$DB_HOST" "-g"
+
+                CMD=(
+                    bench new-site
+                    --db-root-username=root
+                    --db-root-password=123
+                    --db-host="$DB_HOST"
+                    --db-type="$DB_TYPE"
+                    --mariadb-user-host-login-scope=%
+                    --admin-password="$ADMIN_PASSWORD"
+                    "$site_name"
+                )
+
+            else
+
+                DB_HOST="postgresql"
+
+                run_bench_config "db_host" "$DB_HOST" "-g"
+
+                CMD=(
+                    bench new-site
+                    --db-root-username=root
+                    --db-root-password=123
+                    --db-host="$DB_HOST"
+                    --db-type="$DB_TYPE"
+                    --admin-password="$ADMIN_PASSWORD"
+                    "$site_name"
+                )
+            fi
+
+            cprint 2 "Creating Site: $site_name"
+
+            "${CMD[@]}"
+        fi
+
+        # Run matching installer script
+        cprint 2 "Running Installer: $(basename "$installer")"
+
+        BENCH_DIR="$BENCH_PATH" \
+        SITE_NAME="$site_name" \
+        bash "$installer"
+
+        cprint 2 "Completed: $site_name"
     done
-
-    CMD+=("$SITE_NAME")
-
-    cprint 2 "Creating site: $SITE_NAME"
-
-    "${CMD[@]}"
 
     popd > /dev/null
 }
