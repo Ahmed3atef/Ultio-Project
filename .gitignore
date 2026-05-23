@@ -1,2 +1,1 @@
-./development/frappe-*
-./development/bench-*
+development/frappe-bench/*
