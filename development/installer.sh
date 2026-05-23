@@ -297,6 +297,18 @@ main() {
 
     create_site
 
+    pushd "$BENCH_PATH" > /dev/null
+
+    cprint 2 "Running bench build..."
+
+    bench setup requirements --node
+
+    bench build
+
+    cprint 2 "Running bench migrate..."
+
+    popd > /dev/null
+
     cprint 2 "Done."
 }
 
