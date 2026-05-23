@@ -91,6 +91,11 @@ get_app() {
 
         # Register app in apps.txt if not already there
         if ! grep -qx "$FOLDER_NAME" "$APPS_TXT"; then
+            # Ensure the file ends with a newline before appending
+            # (bench creates apps.txt with just "frappe" and no trailing newline)
+            if [ -s "$APPS_TXT" ] && [ "$(tail -c1 "$APPS_TXT" | wc -l)" -eq 0 ]; then
+                echo "" >> "$APPS_TXT"  # Add the missing newline first
+            fi
             echo "$FOLDER_NAME" >> "$APPS_TXT"
             echo -e "${GREEN}✔ Added '$FOLDER_NAME' to apps.txt${NC}"
         else
