@@ -132,6 +132,11 @@ get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/aljar_system.git"
 get_app "" "stage"  "git@git.fabrica-dev.com:frappe_erp/fabrica_pos_awesome.git"
 get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/fabrica_pos_awesome.git"
 get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/biography_erp.git"
+get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/coverage_erp.git"
+get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/imarrae_system.git"
+get_app "" "main"    "git@git.fabrica-dev.com:frappe_erp/salary_tax_eg.git"
+
+
 
 echo -e "\n${GREEN}========================================${NC}"
 echo -e "${GREEN}All apps fetched and registered successfully!${NC}"
