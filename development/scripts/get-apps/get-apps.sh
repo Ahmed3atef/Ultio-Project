@@ -107,8 +107,9 @@ get_app() {
 }
 
 # ── Public apps (URL auto-derived from frappe GitHub org) ────────────────────
-get_app "erpnext"  "v15.38.1"
-get_app "hrms"     "v15.47.1"
+get_app "frappe"   "version-15"
+get_app "erpnext"  "version-15"
+get_app "hrms"     "version-15"
 get_app "lending"  "version-15"
 get_app "insights" "version-3"
 get_app "" "main"   "https://github.com/iptelephony/persona.git"
@@ -137,7 +138,7 @@ get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/coverage_erp.git"
 get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/imarrae_system.git"
 get_app "" "main"    "git@git.fabrica-dev.com:frappe_erp/salary_tax_eg.git"
 get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/kunouz_erp.git"
-get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/biography_erp.git
+get_app "" "develop" "git@git.fabrica-dev.com:frappe_erp/biography_erp.git"
 
 
 
