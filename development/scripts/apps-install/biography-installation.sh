@@ -69,7 +69,7 @@ install_app "hrms"                  "v15.47.1"
 install_app "erp_fabrica"           "stage"
 install_app "fabrica_accounting"    "develop"
 install_app "fabrica_construction"  "develop"
-install_app "crm_integratoin"       "develop"
+install_app "crm_integration"       "develop"
 install_app "biography_erp"         "develop"
 
 
