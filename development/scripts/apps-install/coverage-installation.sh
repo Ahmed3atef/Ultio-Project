@@ -63,8 +63,10 @@ install_app() {
 }
 
 # Install apps in order — args: APP_NAME  BRANCH
+install_app "frappe"                "v15.106.0"
 install_app "erpnext"               "v15.105.0"
 install_app "hrms"                  "v15.49.1"
+install_app "persona"               "main"
 install_app "erp_fabrica"           "stage"
 install_app "fabrica_pos_awesome"   "stage"
 install_app "coverage_erp"          "develop"
