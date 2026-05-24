@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-SITE_NAME="${SITE_NAME:-alqamzi.localhost}"
+SITE_NAME="${SITE_NAME:-aljar.localhost}"
 BENCH_DIR="${BENCH_DIR:-/workspace/development/frappe-bench}"
 APPS_DIR="$BENCH_DIR/apps"
 
@@ -63,20 +63,17 @@ install_app() {
 }
 
 # Install apps in order — args: APP_NAME  BRANCH
-install_app "erpnext"               "v15.38.1"
+install_app "erpnext"               "v15.64.0"
 install_app "hrms"                  "v15.47.1"
 install_app "erp_fabrica"           "stage"
 install_app "fabrica_pwa"           "main"
-install_app "mail_job_application"  "master"
-install_app "fabrica_accounting"    "develop"
-install_app "fabrica_construction"  "develop-no-acc"
 install_app "hr_fabrica"            "develop"
-install_app "bio_time_software"     "main"
+install_app "zk_bio_device"         "master"
 install_app "lending"               "version-15"
-install_app "alqamzi_system"        "develop"
-install_app "fabrica_factoring"     "develop"
-install_app "fabrica_leasing"       "develop"
-install_app "child_table_pagination" "develop"
+install_app "fabrica_accounting"    "develop"
+install_app "fabrica_construction"  "develop"
+install_app "crm_integration"       "develop"
+install_app "aljar_system"          "develop"
 install_app "learning_center"       "main"
 
 echo -e "\n${GREEN}========================================${NC}"
