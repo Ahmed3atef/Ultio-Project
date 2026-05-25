@@ -3,6 +3,7 @@
 # setup-site.sh
 #
 # Creates a Frappe site and installs the apps defined in a JSON config file.
+# Uses python3 for JSON parsing — no jq required.
 #
 # Usage:
 #   BENCH_DIR=/path/to/bench \
@@ -36,16 +37,31 @@ APPS_DIR="$BENCH_DIR/apps"
 DB_TYPE="${DB_TYPE:-mariadb}"
 ADMIN_PASSWORD="${ADMIN_PASSWORD:-admin}"
 
-# ── Parse JSON (jq required) ──────────────────────────────────────────────────
+# ── JSON helpers via python3 (always available in frappe bench) ───────────────
 
-if ! command -v jq &>/dev/null; then
-    echo "[setup-site] ERROR: 'jq' is required but not installed."
-    exit 1
-fi
+# Extract a top-level string field from the JSON config
+json_field() {
+    python3 - "$CONFIG_FILE" "$1" << 'PY'
+import json, sys
+data = json.load(open(sys.argv[1]))
+val = data.get(sys.argv[2], "")
+print(val if val else "")
+PY
+}
 
-SITE_NAME="$(jq -r '.site_name' "$CONFIG_FILE")"
+# Print "name<TAB>branch" for every entry in .apps[]
+json_app_pairs() {
+    python3 - "$CONFIG_FILE" << 'PY'
+import json, sys
+data = json.load(open(sys.argv[1]))
+for app in data.get("apps", []):
+    print(app["name"] + "\t" + app["branch"])
+PY
+}
 
-if [[ -z "$SITE_NAME" || "$SITE_NAME" == "null" ]]; then
+SITE_NAME="$(json_field "$CONFIG_FILE" "site_name")"
+
+if [[ -z "$SITE_NAME" ]]; then
     echo "[setup-site] ERROR: 'site_name' missing in $CONFIG_FILE"
     exit 1
 fi
@@ -57,9 +73,9 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-log_info()  { echo -e "${YELLOW}[setup-site] $*${NC}"; }
-log_ok()    { echo -e "${GREEN}[setup-site] ✔ $*${NC}"; }
-log_err()   { echo -e "${RED}[setup-site] ✘ $*${NC}"; }
+log_info() { echo -e "${YELLOW}[setup-site] $*${NC}"; }
+log_ok()   { echo -e "${GREEN}[setup-site] ✔ $*${NC}"; }
+log_err()  { echo -e "${RED}[setup-site] ✘ $*${NC}"; }
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -145,17 +161,12 @@ create_site() {
 install_all_apps() {
     cd "$BENCH_DIR"
 
-    local length
-    length="$(jq '.apps | length' "$CONFIG_FILE")"
+    log_info "Reading apps from: $(basename "$CONFIG_FILE")"
 
-    log_info "Installing $length app(s) on $SITE_NAME"
-
-    for i in $(seq 0 $((length - 1))); do
-        local app branch
-        app="$(jq -r ".apps[$i].name"   "$CONFIG_FILE")"
-        branch="$(jq -r ".apps[$i].branch" "$CONFIG_FILE")"
+    # json_app_pairs emits "name<TAB>branch" — read both fields in one loop
+    while IFS=$'\t' read -r app branch; do
         install_app "$app" "$branch"
-    done
+    done < <(json_app_pairs "$CONFIG_FILE")
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────

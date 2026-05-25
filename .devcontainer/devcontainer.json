@@ -44,7 +44,7 @@
   "service": "frappe",
   "workspaceFolder": "/workspace/development",
   "shutdownAction": "stopCompose",
-  "postCreateCommand": "uv tool install pre-commit",
+  "postCreateCommand": "uv tool install pre-commit && git config --global user.signingkey /home/frappe/.ssh/id_ed25519.pub && git config --global gpg.format ssh && git config --global commit.gpgsign true && git config --global gpg.ssh.allowedSignersFile /home/frappe/.ssh/allowed_signers && echo \"$(git config --global user.email) namespaces=\\\"git\\\" $(cat /home/frappe/.ssh/id_ed25519.pub)\" > /home/frappe/.ssh/allowed_signers",
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/frappe/.ssh,type=bind,consistency=cached"
   ]
