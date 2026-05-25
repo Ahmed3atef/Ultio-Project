@@ -27,7 +27,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 GET_APPS_SCRIPT="$SCRIPT_DIR/scripts/get-apps/get-apps.sh"
-SITES_DIR="$SCRIPT_DIR/sites"
+SITES_DIR="$SCRIPT_DIR/scripts/sites"
 SETUP_SITE_SCRIPT="$SCRIPT_DIR/scripts/setup-site.sh"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
