@@ -1,0 +1,22 @@
+{
+  "site_name": "alqamzi.localhost",
+  "apps": [
+    { "name": "frappe",                  "branch": "v15.49.0"        },
+    { "name": "erpnext",                 "branch": "v15.38.1"        },
+    { "name": "hrms",                    "branch": "v15.47.1"        },
+    { "name": "erp_fabrica",             "branch": "stage"           },
+    { "name": "fabrica_pwa",             "branch": "main"            },
+    { "name": "mail_job_application",    "branch": "master"          },
+    { "name": "fabrica_accounting",      "branch": "develop"         },
+    { "name": "fabrica_construction",    "branch": "develop-no-acc"  },
+    { "name": "hr_fabrica",              "branch": "develop"         },
+    { "name": "persona",                 "branch": "main"            },
+    { "name": "bio_time_software",       "branch": "main"            },
+    { "name": "lending",                 "branch": "version-15"      },
+    { "name": "alqamzi_system",          "branch": "develop"         },
+    { "name": "fabrica_factoring",       "branch": "develop"         },
+    { "name": "fabrica_leasing",         "branch": "develop"         },
+    { "name": "child_table_pagination",  "branch": "develop"         },
+    { "name": "learning_center",         "branch": "main"            }
+  ]
+}

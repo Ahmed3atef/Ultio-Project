@@ -1,0 +1,12 @@
+{
+  "site_name": "coverage.localhost",
+  "apps": [
+    { "name": "frappe",              "branch": "v15.106.0" },
+    { "name": "erpnext",             "branch": "v15.105.0" },
+    { "name": "hrms",                "branch": "v15.49.1"  },
+    { "name": "persona",             "branch": "main"      },
+    { "name": "erp_fabrica",         "branch": "stage"     },
+    { "name": "fabrica_pos_awesome", "branch": "stage"     },
+    { "name": "coverage_erp",        "branch": "develop"   }
+  ]
+}
