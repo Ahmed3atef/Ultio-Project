@@ -1,0 +1,144 @@
+{
+  "apps": [
+    {
+      "name": "frappe",
+      "branch": "version-15",
+      "url": ""
+    },
+    {
+      "name": "erpnext",
+      "branch": "version-15",
+      "url": ""
+    },
+    {
+      "name": "hrms",
+      "branch": "version-15",
+      "url": ""
+    },
+    {
+      "name": "lending",
+      "branch": "version-15",
+      "url": ""
+    },
+    {
+      "name": "insights",
+      "branch": "version-3",
+      "url": ""
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "https://github.com/iptelephony/persona.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/erp_fabrica.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/fabrica_pwa.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/alerts.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/mail_job_application.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/hr_fabrica.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/bio_time_software.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/alqamzi_system.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/fabrica_factoring.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/fabrica_leasing.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/child_table_pagination.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/learning_center.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/zk_bio_device.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/fabrica_accounting.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/fabrica_construction.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/crm_integration.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/aljar_system.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/fabrica_pos_awesome.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/biography_erp.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/coverage_erp.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/imarrae_system.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/salary_tax_eg.git"
+    },
+    {
+      "name": "",
+      "branch": "",
+      "url": "git@git.fabrica-dev.com:frappe_erp/kunouz_erp.git"
+    }
+  ]
+}

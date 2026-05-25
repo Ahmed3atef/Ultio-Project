@@ -59,6 +59,33 @@ for app in data.get("apps", []):
 PY
 }
 
+setup_wizard_args() {
+    python3 << 'PY'
+import json
+import os
+from datetime import date
+
+year = date.today().year
+args = {
+    "language": os.environ.get("SETUP_LANGUAGE", "English"),
+    "email": os.environ.get("SETUP_EMAIL", "test@erpnext.com"),
+    "full_name": os.environ.get("SETUP_FULL_NAME", "Test User"),
+    "password": os.environ.get("SETUP_PASSWORD", "test"),
+    "country": os.environ.get("SETUP_COUNTRY", "United States"),
+    "timezone": os.environ.get("SETUP_TIMEZONE", "America/New_York"),
+    "currency": os.environ.get("SETUP_CURRENCY", "USD"),
+    "company_name": os.environ.get("SETUP_COMPANY_NAME", "$Test Company"),
+    "company_abbr": os.environ.get("SETUP_COMPANY_ABBR", "TC"),
+    "industry": os.environ.get("SETUP_INDUSTRY", "Manufacturing"),
+    "fy_start_date": os.environ.get("SETUP_FY_START_DATE", f"{year}-01-01"),
+    "fy_end_date": os.environ.get("SETUP_FY_END_DATE", f"{year}-12-31"),
+    "chart_of_accounts": os.environ.get("SETUP_CHART_OF_ACCOUNTS", "Standard"),
+    "company_tagline": os.environ.get("SETUP_COMPANY_TAGLINE", ""),
+}
+print(json.dumps({"args": args}))
+PY
+}
+
 SITE_NAME="$(json_field "site_name")"
 
 if [[ -z "$SITE_NAME" ]]; then
@@ -123,12 +150,24 @@ install_app() {
     log_ok "$app installed"
 }
 
+run_setup_wizard() {
+    local kwargs
+
+    log_info "Running setup wizard after frappe, erpnext, and hrms are installed"
+    kwargs="$(setup_wizard_args)"
+    bench --site "$SITE_NAME" execute \
+        frappe.desk.page.setup_wizard.setup_wizard.setup_complete \
+        --kwargs "$kwargs"
+    log_ok "Setup wizard completed"
+}
+
 # ── Create site ───────────────────────────────────────────────────────────────
 
 create_site() {
     cd "$BENCH_DIR"
 
-    if [[ -d "$BENCH_DIR/scripts/sites/$SITE_NAME" ]]; then
+    if [[ -d "$BENCH_DIR/sites/$SITE_NAME" ]]; then
+        echo $BENCH_DIR
         log_info "Site already exists: $SITE_NAME — skipping creation."
         return
     fi
@@ -166,9 +205,13 @@ install_all_apps() {
     # json_app_pairs emits "name<TAB>branch" — read both fields in one loop
     while IFS=$'\t' read -r app branch; do
         install_app "$app" "$branch"
+
+        if [[ "$app" == "hrms" ]]; then
+            run_setup_wizard
+        fi
     done < <(json_app_pairs)
 
-    bench --$SITE_NAME migrate
+    bench --site "$SITE_NAME" migrate
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────
