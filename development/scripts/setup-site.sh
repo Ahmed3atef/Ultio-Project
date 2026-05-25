@@ -59,7 +59,7 @@ for app in data.get("apps", []):
 PY
 }
 
-SITE_NAME="$(json_field "$CONFIG_FILE" "site_name")"
+SITE_NAME="$(json_field "site_name")"
 
 if [[ -z "$SITE_NAME" ]]; then
     echo "[setup-site] ERROR: 'site_name' missing in $CONFIG_FILE"
@@ -166,7 +166,9 @@ install_all_apps() {
     # json_app_pairs emits "name<TAB>branch" — read both fields in one loop
     while IFS=$'\t' read -r app branch; do
         install_app "$app" "$branch"
-    done < <(json_app_pairs "$CONFIG_FILE")
+    done < <(json_app_pairs)
+
+    bench --$SITE_NAME migrate
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────
