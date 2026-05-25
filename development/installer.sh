@@ -20,6 +20,8 @@ SITES_DIR="$SCRIPT_DIR/scripts/sites"
 SETUP_SITE_SCRIPT="$SCRIPT_DIR/scripts/setup-site.sh"
 SELECTED_APPS_CONFIG="$GET_APPS_CONFIG"
 APP_SELECTION_FILE=""
+SITE_MODE="configured"
+CLEAN_SITE_NAME="clean.localhost"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 
@@ -267,6 +269,67 @@ PY
     done
 }
 
+choose_site_mode() {
+    local mode
+
+    echo -e "\n${YELLOW}Site setup${NC}"
+    echo "1) Use site JSON configs from scripts/sites (install apps listed per site)"
+    echo "2) Create one clean site (no app installs)"
+
+    while true; do
+        read -r -p "Choose an option [1]: " mode
+        mode="${mode:-1}"
+        case "$mode" in
+            1|configured|config|c)
+                SITE_MODE="configured"
+                log_ok "Selected site JSON config mode."
+                return
+                ;;
+            2|clean)
+                SITE_MODE="clean"
+                CLEAN_SITE_NAME="$(prompt_value "Clean site name" "$CLEAN_SITE_NAME")"
+                log_ok "Selected clean site: $CLEAN_SITE_NAME"
+                return
+                ;;
+            *) echo "Choose 1 for site configs or 2 for a clean site." ;;
+        esac
+    done
+}
+
+create_clean_site() {
+    pushd "$BENCH_PATH" > /dev/null
+
+    if [[ -d "$BENCH_PATH/sites/$CLEAN_SITE_NAME" ]]; then
+        log_info "Clean site already exists: $CLEAN_SITE_NAME — skipping creation."
+        popd > /dev/null
+        return
+    fi
+
+    log_info "Creating clean site: $CLEAN_SITE_NAME (db_type=$DB_TYPE)"
+
+    local cmd=(
+        bench new-site
+        --db-root-username=root
+        --db-root-password=123
+        --db-type="$DB_TYPE"
+        --admin-password="$ADMIN_PASSWORD"
+        "$CLEAN_SITE_NAME"
+    )
+
+    if [[ "$DB_TYPE" == "mariadb" ]]; then
+        bench set-config -g db_host "mariadb"
+        cmd+=(--db-host="mariadb" --mariadb-user-host-login-scope=%)
+    else
+        bench set-config -g db_host "postgresql"
+        cmd+=(--db-host="postgresql")
+    fi
+
+    "${cmd[@]}"
+    log_ok "Clean site created: $CLEAN_SITE_NAME"
+
+    popd > /dev/null
+}
+
 # ── Step 1: Init bench ────────────────────────────────────────────────────────
 
 init_bench() {
@@ -375,15 +438,25 @@ finalize() {
 
 main() {
     configure_cli
-    choose_apps
+    choose_site_mode
+
+    if [[ "$SITE_MODE" == "configured" ]]; then
+        choose_apps
+    fi
 
     echo -e "\n${GREEN}════════════════════════════════════════${NC}"
     log_ok "Starting install"
     echo -e "${GREEN}════════════════════════════════════════${NC}\n"
 
     init_bench
-    get_apps
-    setup_sites
+
+    if [[ "$SITE_MODE" == "configured" ]]; then
+        get_apps
+        setup_sites
+    else
+        create_clean_site
+    fi
+
     finalize
 
     echo -e "\n${GREEN}════════════════════════════════════════${NC}"
