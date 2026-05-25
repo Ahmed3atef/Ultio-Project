@@ -128,7 +128,7 @@ install_app() {
 create_site() {
     cd "$BENCH_DIR"
 
-    if [[ -d "$BENCH_DIR/sites/$SITE_NAME" ]]; then
+    if [[ -d "$BENCH_DIR/scripts/sites/$SITE_NAME" ]]; then
         log_info "Site already exists: $SITE_NAME — skipping creation."
         return
     fi
