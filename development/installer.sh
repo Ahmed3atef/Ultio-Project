@@ -23,6 +23,7 @@ APP_SELECTION_FILE=""
 SITE_MODE="configured"
 CLEAN_SITE_NAME="clean.localhost"
 SELECTED_SITE_CONFIGS=()
+SITE_CONFIG_APP_MODE="with_apps"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 
@@ -409,16 +410,54 @@ choose_site_configs() {
     done
 }
 
-create_clean_site() {
+choose_site_config_app_mode() {
+    local mode
+
+    echo -e "\n${YELLOW}Selected site configs${NC}"
+    echo "1) Create sites and install apps listed in each site JSON"
+    echo "2) Create sites only (no app installs)"
+
+    while true; do
+        read -r -p "Choose an option [1]: " mode
+        mode="${mode:-1}"
+        case "$mode" in
+            1|apps|with-apps)
+                SITE_CONFIG_APP_MODE="with_apps"
+                log_ok "Selected app install mode for site configs."
+                return
+                ;;
+            2|clean|sites-only|no-apps)
+                SITE_CONFIG_APP_MODE="sites_only"
+                log_ok "Selected sites-only mode for site configs."
+                return
+                ;;
+            *) echo "Choose 1 to install apps or 2 to create sites only." ;;
+        esac
+    done
+}
+
+site_name_from_config() {
+    python3 - "$1" << 'PY'
+import json
+import sys
+
+with open(sys.argv[1]) as handle:
+    print(json.load(handle).get("site_name", ""))
+PY
+}
+
+create_site_by_name() {
+    local site_name="$1"
+
     pushd "$BENCH_PATH" > /dev/null
 
-    if [[ -d "$BENCH_PATH/sites/$CLEAN_SITE_NAME" ]]; then
-        log_info "Clean site already exists: $CLEAN_SITE_NAME — skipping creation."
+    if [[ -d "$BENCH_PATH/sites/$site_name" ]]; then
+        log_info "Site already exists: $site_name — skipping creation."
         popd > /dev/null
         return
     fi
 
-    log_info "Creating clean site: $CLEAN_SITE_NAME (db_type=$DB_TYPE)"
+    log_info "Creating site: $site_name (db_type=$DB_TYPE)"
 
     local cmd=(
         bench new-site
@@ -426,7 +465,7 @@ create_clean_site() {
         --db-root-password=123
         --db-type="$DB_TYPE"
         --admin-password="$ADMIN_PASSWORD"
-        "$CLEAN_SITE_NAME"
+        "$site_name"
     )
 
     if [[ "$DB_TYPE" == "mariadb" ]]; then
@@ -438,9 +477,35 @@ create_clean_site() {
     fi
 
     "${cmd[@]}"
-    log_ok "Clean site created: $CLEAN_SITE_NAME"
+    log_ok "Site created: $site_name"
 
     popd > /dev/null
+}
+
+create_clean_sites_from_configs() {
+    local config site_name
+
+    if [[ "${#SELECTED_SITE_CONFIGS[@]}" -eq 0 ]]; then
+        log_err "No site configs selected."
+        exit 1
+    fi
+
+    for config in "${SELECTED_SITE_CONFIGS[@]}"; do
+        site_name="$(site_name_from_config "$config")"
+        if [[ -z "$site_name" ]]; then
+            log_err "site_name missing in $(basename "$config")"
+            exit 1
+        fi
+
+        echo -e "\n${GREEN}════════════════════════════════════════${NC}"
+        log_info "Creating clean site from: $(basename "$config")"
+        echo -e "${GREEN}════════════════════════════════════════${NC}"
+        create_site_by_name "$site_name"
+    done
+}
+
+create_clean_site() {
+    create_site_by_name "$CLEAN_SITE_NAME"
 }
 
 # ── Step 1: Init bench ────────────────────────────────────────────────────────
@@ -545,7 +610,11 @@ main() {
 
     if [[ "$SITE_MODE" == "configured" ]]; then
         choose_site_configs
-        choose_apps
+        choose_site_config_app_mode
+
+        if [[ "$SITE_CONFIG_APP_MODE" == "with_apps" ]]; then
+            choose_apps
+        fi
     fi
 
     echo -e "\n${GREEN}════════════════════════════════════════${NC}"
@@ -555,8 +624,12 @@ main() {
     init_bench
 
     if [[ "$SITE_MODE" == "configured" ]]; then
-        get_apps
-        setup_sites
+        if [[ "$SITE_CONFIG_APP_MODE" == "with_apps" ]]; then
+            get_apps
+            setup_sites
+        else
+            create_clean_sites_from_configs
+        fi
     else
         create_clean_site
     fi
