@@ -1,0 +1,8 @@
+{
+  "site_name": "aljar.localhost",
+  "apps": [
+    { "name": "frappe",               "branch": "v15.64.0"   },
+    { "name": "erpnext",              "branch": "v15.64.0"   },
+    { "name": "hrms",                 "branch": "v15.47.1"   }
+  ]
+}
