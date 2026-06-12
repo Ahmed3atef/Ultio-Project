@@ -6,6 +6,7 @@
 # 2. Lets you fetch all apps or select one/more apps from scripts/get-apps/apps.json
 # 3. Initialises frappe-bench when needed
 # 4. Calls setup-site.sh for every JSON file in scripts/sites/
+# 5. Starts bench so initial setup can be completed manually
 # ─────────────────────────────────────────────────────────────────────────────
 
 set -euo pipefail
@@ -23,7 +24,7 @@ APP_SELECTION_FILE=""
 SITE_MODE="configured"
 CLEAN_SITE_NAME="clean.localhost"
 SELECTED_SITE_CONFIGS=()
-SITE_CONFIG_APP_MODE="with_apps"
+SITE_CONFIG_APP_MODE="fetch_apps"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 
@@ -414,24 +415,30 @@ choose_site_config_app_mode() {
     local mode
 
     echo -e "\n${YELLOW}Selected site configs${NC}"
-    echo "1) Create sites and install apps listed in each site JSON"
-    echo "2) Create sites only (no app installs)"
+    echo "1) Fetch apps, then create sites and install apps listed in each site JSON"
+    echo "2) Create sites and install apps from existing bench apps"
+    echo "3) Create sites only (no app installs)"
 
     while true; do
         read -r -p "Choose an option [1]: " mode
         mode="${mode:-1}"
         case "$mode" in
-            1|apps|with-apps)
-                SITE_CONFIG_APP_MODE="with_apps"
-                log_ok "Selected app install mode for site configs."
+            1|fetch|fetch-apps|with-apps)
+                SITE_CONFIG_APP_MODE="fetch_apps"
+                log_ok "Selected fetch-and-install mode for site configs."
                 return
                 ;;
-            2|clean|sites-only|no-apps)
+            2|existing|existing-apps|local-apps)
+                SITE_CONFIG_APP_MODE="existing_apps"
+                log_ok "Selected existing-app install mode for site configs."
+                return
+                ;;
+            3|clean|sites-only|no-apps)
                 SITE_CONFIG_APP_MODE="sites_only"
                 log_ok "Selected sites-only mode for site configs."
                 return
                 ;;
-            *) echo "Choose 1 to install apps or 2 to create sites only." ;;
+            *) echo "Choose 1 to fetch and install apps, 2 to install existing apps, or 3 to create sites only." ;;
         esac
     done
 }
@@ -585,21 +592,12 @@ setup_sites() {
     done
 }
 
-# ── Step 4: Build assets & migrate ───────────────────────────────────────────
-
-finalize() {
+start_bench() {
     pushd "$BENCH_PATH" > /dev/null
 
-    log_info "Installing Node requirements..."
-    bench setup requirements --node
-
-    log_info "Building assets..."
-    bench build
-
-    log_info "Running migrations..."
-    bench --site all migrate
-
-    popd > /dev/null
+    log_info "Starting bench..."
+    log_info "Open the site in your browser and complete the initial setup manually."
+    bench start
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -612,7 +610,7 @@ main() {
         choose_site_configs
         choose_site_config_app_mode
 
-        if [[ "$SITE_CONFIG_APP_MODE" == "with_apps" ]]; then
+        if [[ "$SITE_CONFIG_APP_MODE" == "fetch_apps" ]]; then
             choose_apps
         fi
     fi
@@ -624,21 +622,27 @@ main() {
     init_bench
 
     if [[ "$SITE_MODE" == "configured" ]]; then
-        if [[ "$SITE_CONFIG_APP_MODE" == "with_apps" ]]; then
-            get_apps
-            setup_sites
-        else
-            create_clean_sites_from_configs
-        fi
+        case "$SITE_CONFIG_APP_MODE" in
+            fetch_apps)
+                get_apps
+                setup_sites
+                ;;
+            existing_apps)
+                setup_sites
+                ;;
+            sites_only)
+                create_clean_sites_from_configs
+                ;;
+        esac
     else
         create_clean_site
     fi
 
-    finalize
-
     echo -e "\n${GREEN}════════════════════════════════════════${NC}"
-    log_ok "All done."
+    log_ok "Install complete. Bench will start now."
     echo -e "${GREEN}════════════════════════════════════════${NC}\n"
+
+    start_bench
 }
 
 main

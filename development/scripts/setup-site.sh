@@ -32,10 +32,12 @@ if [[ -z "$CONFIG_FILE" || ! -f "$CONFIG_FILE" ]]; then
     exit 1
 fi
 
+CONFIG_FILE="$(realpath "$CONFIG_FILE")"
 BENCH_DIR="${BENCH_DIR:-/workspace/development/frappe-bench}"
 APPS_DIR="$BENCH_DIR/apps"
 DB_TYPE="${DB_TYPE:-mariadb}"
 ADMIN_PASSWORD="${ADMIN_PASSWORD:-admin}"
+WAIT_FOR_INITIAL_SETUP="${WAIT_FOR_INITIAL_SETUP:-1}"
 
 # ── JSON helpers via python3 (always available in frappe bench) ───────────────
 
@@ -59,32 +61,18 @@ for app in data.get("apps", []):
 PY
 }
 
-setup_wizard_args() {
-    python3 << 'PY'
-import json
-import os
-from datetime import date
-
-year = date.today().year
-args = {
-    "language": os.environ.get("SETUP_LANGUAGE", "English"),
-    "email": os.environ.get("SETUP_EMAIL", "test@erpnext.com"),
-    "full_name": os.environ.get("SETUP_FULL_NAME", "Test User"),
-    "password": os.environ.get("SETUP_PASSWORD", "test"),
-    "country": os.environ.get("SETUP_COUNTRY", "United States"),
-    "timezone": os.environ.get("SETUP_TIMEZONE", "America/New_York"),
-    "currency": os.environ.get("SETUP_CURRENCY", "USD"),
-    "company_name": os.environ.get("SETUP_COMPANY_NAME", "$Test Company"),
-    "company_abbr": os.environ.get("SETUP_COMPANY_ABBR", "TC"),
-    "industry": os.environ.get("SETUP_INDUSTRY", "Manufacturing"),
-    "fy_start_date": os.environ.get("SETUP_FY_START_DATE", f"{year}-01-01"),
-    "fy_end_date": os.environ.get("SETUP_FY_END_DATE", f"{year}-12-31"),
-    "chart_of_accounts": os.environ.get("SETUP_CHART_OF_ACCOUNTS", "Standard"),
-    "company_tagline": os.environ.get("SETUP_COMPANY_TAGLINE", ""),
-}
-print(json.dumps({"args": args}))
+json_app_branch() {
+    python3 - "$CONFIG_FILE" "$1" << 'PY'
+import json, sys
+data = json.load(open(sys.argv[1]))
+target = sys.argv[2]
+for app in data.get("apps", []):
+    if app.get("name") == target:
+        print(app.get("branch", ""))
+        break
 PY
 }
+
 
 SITE_NAME="$(json_field "site_name")"
 
@@ -150,15 +138,62 @@ install_app() {
     log_ok "$app installed"
 }
 
-run_setup_wizard() {
-    local kwargs
+prepare_initial_setup_assets() {
+    cd "$BENCH_DIR"
 
-    log_info "Running setup wizard after frappe, erpnext, and hrms are installed"
-    kwargs="$(setup_wizard_args)"
-    bench --site "$SITE_NAME" execute \
-        frappe.desk.page.setup_wizard.setup_wizard.setup_complete \
-        --kwargs "$kwargs"
-    log_ok "Setup wizard completed"
+    log_info "Refreshing Node requirements for the checked-out app versions..."
+    bench setup requirements --node
+
+    local app
+    for app in frappe erpnext hrms; do
+        if [[ -d "$APPS_DIR/$app" ]]; then
+            log_info "Building assets for $app..."
+            bench build --app "$app"
+        fi
+    done
+
+    bench --site "$SITE_NAME" clear-cache || true
+}
+
+# ── Manual initial setup ───────────────────────────────────────────────────────────────
+
+manual_initial_setup() {
+    if [[ "$WAIT_FOR_INITIAL_SETUP" != "1" ]]; then
+        return
+    fi
+
+    cd "$BENCH_DIR"
+
+    local bench_status=0
+    local interrupted=false
+
+    echo
+    log_info "Starting bench for manual initial setup."
+    log_info "Open: http://$SITE_NAME:8000"
+    log_info "Complete the initial setup, then press Ctrl+C once to stop bench and resume app installation."
+
+    manual_setup_interrupt() {
+        interrupted=true
+        log_info "Stopping bench and resuming installer..."
+    }
+
+    trap manual_setup_interrupt INT
+
+    set +e
+    bench start
+    bench_status="$?"
+    set -e
+
+    trap - INT
+    unset -f manual_setup_interrupt
+
+    if [[ "$interrupted" == true ]]; then
+        log_info "bench start was stopped by user."
+    else
+        log_info "bench start exited with status $bench_status."
+    fi
+
+    log_ok "Manual initial setup step finished; resuming app installation."
 }
 
 # ── Create site ───────────────────────────────────────────────────────────────
@@ -171,6 +206,14 @@ create_site() {
         log_info "Site already exists: $SITE_NAME — skipping creation."
         return
     fi
+
+    local frappe_branch
+    frappe_branch="$(json_app_branch "frappe")"
+    if [[ -z "$frappe_branch" ]]; then
+        log_err "frappe app missing in $CONFIG_FILE"
+        exit 1
+    fi
+    checkout_branch "frappe" "$frappe_branch"
 
     log_info "Creating site: $SITE_NAME (db_type=$DB_TYPE)"
 
@@ -202,16 +245,38 @@ install_all_apps() {
 
     log_info "Reading apps from: $(basename "$CONFIG_FILE")"
 
-    # json_app_pairs emits "name<TAB>branch" — read both fields in one loop
-    while IFS=$'\t' read -r app branch; do
-        install_app "$app" "$branch"
+    local core_app branch
 
-        if [[ "$app" == "hrms" ]]; then
-            run_setup_wizard
+    for core_app in frappe erpnext hrms; do
+        branch="$(json_app_branch "$core_app")"
+        if [[ -z "$branch" ]]; then
+            log_err "$core_app app missing in $CONFIG_FILE"
+            exit 1
         fi
+
+        install_app "$core_app" "$branch"
+    done
+
+    prepare_initial_setup_assets
+    manual_initial_setup
+
+    # json_app_pairs emits "name<TAB>branch" - read both fields in one loop
+    while IFS=$'\t' read -r app branch; do
+        case "$app" in
+            frappe|erpnext|hrms) continue ;;
+        esac
+
+        install_app "$app" "$branch"
     done < <(json_app_pairs)
 
+    log_info "Running migrations for $SITE_NAME..."
     bench --site "$SITE_NAME" migrate
+
+    log_info "Refreshing Node requirements before final build..."
+    bench setup requirements --node
+
+    log_info "Building assets after app installation..."
+    bench build
 }
 
 # ── Main ──────────────────────────────────────────────────────────────────────
