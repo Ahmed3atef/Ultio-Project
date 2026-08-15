@@ -1,0 +1,31 @@
+{
+  "site_name": "uc.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@uc.com",
+    "password": "admin",
+    "company_name": "UC",
+    "company_abbr": "UC",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    { "name": "frappe",               "branch": "v15.64.0"   },
+    { "name": "erpnext",              "branch": "v15.64.1"   },
+    { "name": "hrms",                 "branch": "v15.47.1"   },
+    { "name": "erp_fabrica",          "branch": "stage"      },
+    { "name": "fabrica_pwa",          "branch": "main"       },
+    { "name": "hr_fabrica",           "branch": "version-15" },
+    { "name": "mail_job_application", "branch": "master"     },
+    { "name": "bio_time_software",    "branch": "main"       },
+    { "name": "salary_tax_eg",        "branch": "main"       },
+    { "name": "lending",              "branch": "version-15" },
+    { "name": "fabrica_accounting",   "branch": "develop"    },
+    { "name": "fabrica_construction", "branch": "develop"    },
+    { "name": "crm_integration",      "branch": "develop"    },
+    { "name": "ucdevelopement_system","branch": "version-15" }
+  ]
+}

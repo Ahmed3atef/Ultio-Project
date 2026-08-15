@@ -1,0 +1,24 @@
+{
+  "site_name": "coverage.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@coverage.com",
+    "password": "admin",
+    "company_name": "Coverage",
+    "company_abbr": "COV",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    { "name": "frappe",              "branch": "v15.106.0" },
+    { "name": "erpnext",             "branch": "v15.105.0" },
+    { "name": "hrms",                "branch": "v15.49.1"  },
+    { "name": "persona",             "branch": "main"      },
+    { "name": "erp_fabrica",         "branch": "stage"     },
+    { "name": "fabrica_pos_awesome", "branch": "stage"     },
+    { "name": "coverage_erp",        "branch": "develop"   }
+  ]
+}

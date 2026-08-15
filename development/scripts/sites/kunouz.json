@@ -1,0 +1,32 @@
+{
+  "site_name": "kunouz.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@kunouz.com",
+    "password": "admin",
+    "company_name": "Kunouz",
+    "company_abbr": "KUN",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    { "name": "frappe",               "branch": "v15.76.0"   },
+    { "name": "erpnext",              "branch": "v15.64.0"   },
+    { "name": "hrms",                 "branch": "v15.43.1"   },
+    { "name": "erp_fabrica",          "branch": "version-15" },
+    { "name": "hr_fabrica",           "branch": "develop"    },
+    { "name": "bio_time_software",    "branch": "main"       },
+    { "name": "lending",              "branch": "version-15" },
+    { "name": "fabrica_pwa",          "branch": "main"       },
+    { "name": "fabrica_accounting",   "branch": "develop"    },
+    { "name": "fabrica_construction", "branch": "develop"    },
+    { "name": "crm_integration",      "branch": "develop"    },
+    { "name": "kunouz_erp",           "branch": "develop"    },
+    { "name": "learning_center",      "branch": "main"       },
+    { "name": "commit",               "branch": "main"       },
+    { "name": "fabrica_commit",       "branch": "main"       }
+  ]
+}

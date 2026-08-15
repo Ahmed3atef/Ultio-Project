@@ -1,0 +1,21 @@
+{
+  "site_name": "tutorial.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@tutorial.com",
+    "password": "admin",
+    "company_name": "Standard ERP",
+    "company_abbr": "SER",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    { "name": "frappe",  "branch": "v15.107.2" },
+    { "name": "erpnext", "branch": "v15.107.0" },
+    { "name": "hrms",    "branch": "v15.50.0"  },
+    { "name":"airplane_mode",  "branch":"main"}
+  ]
+}

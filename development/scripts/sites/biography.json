@@ -1,0 +1,25 @@
+{
+  "site_name": "biography.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@biography.com",
+    "password": "admin",
+    "company_name": "Biography",
+    "company_abbr": "BIO",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    { "name": "frappe",               "branch": "v15.64.0" },
+    { "name": "erpnext",              "branch": "v15.64.0" },
+    { "name": "hrms",                 "branch": "v15.47.1" },
+    { "name": "erp_fabrica",          "branch": "stage"    },
+    { "name": "fabrica_accounting",   "branch": "develop"  },
+    { "name": "fabrica_construction", "branch": "develop"  },
+    { "name": "crm_integration",      "branch": "develop"  },
+    { "name": "biography_erp",        "branch": "develop"  }
+  ]
+}

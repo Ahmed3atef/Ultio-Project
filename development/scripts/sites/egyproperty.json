@@ -1,0 +1,86 @@
+{
+  "_comment": "this site must be created via backup to avoid circular dependency issues",
+  "site_name": "egyproperty.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@egyproperty.com",
+    "password": "admin",
+    "company_name": "Egy Property",
+    "company_abbr": "EGY",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    {
+      "name": "frappe",
+      "branch": "v15.86.0"
+    },
+    {
+      "name": "erpnext",
+      "branch": "v15.86.0"
+    },
+    {
+      "name": "hrms",
+      "branch": "v15.45.3"
+    },
+    {
+      "name": "lending",
+      "branch": "version-15"
+    },
+    {
+      "name": "erp_fabrica",
+      "branch": "version-15"
+    },
+    {
+      "name": "fabrica_pwa",
+      "branch": "main"
+    },
+    {
+      "name": "alerts",
+      "branch": "main"
+    },
+    {
+      "name": "mail_job_application",
+      "branch": "master"
+    },
+    {
+      "name": "zk_bio_device",
+      "branch": "master"
+    },
+    {
+      "name": "sip_calls",
+      "branch": "main"
+    },
+    {
+      "name": "insights",
+      "branch": "version-3"
+    },
+    {
+      "name": "text_to_filters",
+      "branch": "main"
+    },
+    {
+      "name": "fabrica_accounting",
+      "branch": "develop"
+    },
+    {
+      "name": "egyproperty",
+      "branch": "staging"
+    },
+    {
+      "name": "realestate_crm",
+      "branch": "staging"
+    },
+    {
+      "name": "persona",
+      "branch": "main"
+    },
+    {
+      "name": "commit",
+      "branch": "main"
+    }
+  ]
+}

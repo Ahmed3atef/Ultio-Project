@@ -1,9 +1,0 @@
-{
-  "site_name": "dev.localhost",
-  "apps": [
-    { "name": "frappe",               "branch": "v15.64.0"   },
-    { "name": "erpnext",              "branch": "v15.64.0"   },
-    { "name": "hrms",                 "branch": "v15.47.1"   },
-    { "name": "commit",               "branch": "main"       }
-  ]
-}

@@ -1,0 +1,31 @@
+{
+  "site_name": "standard_fabrica_erp.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@standard_fabrica_erp.com",
+    "password": "admin",
+    "company_name": "Standard Fabrica",
+    "company_abbr": "SFE",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    { "name": "frappe",               "branch": "v15.64.0"   },
+    { "name": "erpnext",              "branch": "v15.64.0"   },
+    { "name": "hrms",                 "branch": "v15.47.1"   },
+    { "name": "erp_fabrica",          "branch": "stage"      },
+    { "name": "fabrica_pwa",          "branch": "main"       },
+    { "name": "hr_fabrica",           "branch": "develop"    },
+    { "name": "mail_job_application", "branch": "master"     },
+    { "name": "lending",              "branch": "version-15" },
+    { "name": "salary_tax_eg",        "branch": "main"       },
+    { "name": "zk_bio_device",        "branch": "master"     },
+    { "name": "fabrica_accounting",   "branch": "develop"    },
+    { "name": "fabrica_construction", "branch": "master"     },
+    { "name": "crm_integration",      "branch": "develop"    },
+    { "name": "learning_center",      "branch": "main"       }
+  ]
+}

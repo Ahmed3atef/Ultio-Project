@@ -1,0 +1,28 @@
+{
+  "site_name": "fabrica.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@fabrica.com",
+    "password": "admin",
+    "company_name": "Fabrica",
+    "company_abbr": "FAB",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    { "name": "frappe",               "branch": "v15.66.0"   },
+    { "name": "erpnext",              "branch": "v15.64.0"   },
+    { "name": "hrms",                 "branch": "v15.47.1"   },
+    { "name": "erp_fabrica",          "branch": "version-15" },
+    { "name": "fabrica_pwa",          "branch": "main"       },
+    { "name": "fabrica_system",       "branch": "master"     },
+    { "name": "print_designer",       "branch": "develop"    },
+    { "name": "hr_fabrica",           "branch": "version-15" },
+    { "name": "mail_job_application", "branch": "master"     },
+    { "name": "fabrica_pm",           "branch": "develop"    },
+    { "name": "learning_center",      "branch": "main"       }
+  ]
+}

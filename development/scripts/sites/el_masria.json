@@ -1,0 +1,32 @@
+{
+  "site_name": "el_masria.localhost",
+  "setup": {
+    "language": "English",
+    "country": "Egypt",
+    "currency": "EGP",
+    "timezone": "Africa/Cairo",
+    "full_name": "Admin",
+    "email": "admin@el_masria.com",
+    "password": "admin",
+    "company_name": "El Masria",
+    "company_abbr": "ELM",
+    "chart_of_accounts": "Standard"
+  },
+  "apps": [
+    { "name": "frappe",               "branch": "v15.66.1"   },
+    { "name": "erpnext",              "branch": "v15.59.0"   },
+    { "name": "hrms",                 "branch": "v15.47.6"   },
+    { "name": "lending",              "branch": "version-15" },
+    { "name": "erp_fabrica",          "branch": "version-15" },
+    { "name": "fabrica_pwa",          "branch": "main"       },
+    { "name": "mail_job_application", "branch": "master"     },
+    { "name": "hr_fabrica",           "branch": "version-15" },
+    { "name": "bio_time_software",    "branch": "main"       },
+    { "name": "salary_tax_eg",        "branch": "main"       },
+    { "name": "fabrica_accounting",   "branch": "main"       },
+    { "name": "fabrica_construction", "branch": "master"     },
+    { "name": "crm_integration",      "branch": "develop"    },
+    { "name": "elmasria_erp",         "branch": "main"       },
+    { "name": "learning_center",      "branch": "main"       }
+  ]
+}
