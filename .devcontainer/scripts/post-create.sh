@@ -11,9 +11,6 @@ else
     echo "pre-commit is installed: $(pre-commit --version)"
 fi
 
-<<<<<<< Updated upstream
-# 2. Configure SSH commit signing and allowed_signers if the key is mounted
-=======
 # 2. Check Git platform CLI tools (glab & gh)
 if command -v glab >/dev/null 2>&1; then
     echo "GitLab CLI is available: $(glab --version | head -n 1)"
@@ -23,7 +20,6 @@ if command -v gh >/dev/null 2>&1; then
 fi
 
 # 3. Configure SSH commit signing and allowed_signers if the key is mounted
->>>>>>> Stashed changes
 SSH_KEY_PUB="/home/frappe/.ssh/id_ed25519.pub"
 ALLOWED_SIGNERS="/home/frappe/.ssh/allowed_signers"
 
