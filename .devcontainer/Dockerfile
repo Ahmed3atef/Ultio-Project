@@ -1,12 +1,22 @@
 FROM docker.io/frappe/bench:v5.27.0
 
 LABEL maintainer="Ultio Project"
+<<<<<<< Updated upstream
 LABEL description="Extended Frappe Bench image with GitLab CLI, pre-commit, and devcontainer tooling"
 
 USER root
 
 # GitLab CLI version
 ARG GLAB_VERSION=1.119.0
+=======
+LABEL description="Extended Frappe Bench image with GitLab CLI, GitHub CLI, pre-commit, and devcontainer tooling"
+
+USER root
+
+# CLI tool versions
+ARG GLAB_VERSION=1.119.0
+ARG GH_VERSION=2.69.0
+>>>>>>> Stashed changes
 
 # Install GitLab CLI (glab) with multi-architecture support (amd64 / arm64)
 RUN set -eux; \
@@ -24,6 +34,33 @@ RUN set -eux; \
     rm -f /tmp/glab.deb; \
     glab --version
 
+<<<<<<< Updated upstream
+=======
+# Install GitHub CLI (gh) with multi-architecture support (amd64 / arm64)
+RUN set -eux; \
+    ARCH="$(dpkg --print-architecture)"; \
+    case "${ARCH}" in \
+        amd64) GH_ARCH="amd64" ;; \
+        arm64) GH_ARCH="arm64" ;; \
+        *) echo "Unsupported architecture: ${ARCH}" && exit 1 ;; \
+    esac; \
+    GH_DEB="gh_${GH_VERSION}_linux_${GH_ARCH}.deb"; \
+    echo "Installing GitHub CLI v${GH_VERSION} (${GH_ARCH})..."; \
+    wget -qO /tmp/gh.deb "https://github.com/cli/cli/releases/download/v${GH_VERSION}/${GH_DEB}" \
+        || ( \
+            mkdir -p -m 755 /etc/apt/keyrings \
+            && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+            && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+            && echo "deb [arch=${ARCH} signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+            && apt-get update && apt-get install -y gh \
+        ); \
+    if [ -f /tmp/gh.deb ]; then \
+        dpkg -i /tmp/gh.deb || (apt-get update && apt-get install -f -y); \
+        rm -f /tmp/gh.deb; \
+    fi; \
+    gh --version
+
+>>>>>>> Stashed changes
 # Configure system-wide Git HTTP performance optimizations and SSH defaults
 RUN git config --system http.version HTTP/1.1 \
     && git config --system http.postBuffer 1048576000 \

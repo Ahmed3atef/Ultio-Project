@@ -321,6 +321,37 @@ glab mr create --target-branch main --fill --yes
 
 ---
 
+<<<<<<< Updated upstream
+=======
+## 🐙 GitHub CLI (`gh`) & Pull Requests
+
+The container also includes the official **GitHub CLI (`gh`)** pre-installed for interacting with GitHub repositories.
+
+### 1. Log in to `gh`
+Run the interactive login command:
+```bash
+gh auth login
+```
+Follow the interactive prompts (select GitHub.com, HTTPS, authenticate via browser or paste a personal access token).
+
+Alternatively, set your token directly via environment variable in your terminal session or `~/.bashrc`:
+```bash
+export GITHUB_TOKEN="<YOUR_GITHUB_PAT>"
+gh auth status
+```
+
+### 2. Creating Pull Requests with `gh`
+```bash
+# Create a pull request targeting develop or main
+gh pr create --base develop --fill
+
+# Or interactive PR creation with prompt for title & body
+gh pr create
+```
+
+---
+
+>>>>>>> Stashed changes
 ## ⚙️ Core Helper Scripts (`development/scripts/lib/`)
 
 Under the hood, both `installer.sh` and direct bench tasks rely on focused helper scripts in `development/scripts/lib/`:
@@ -347,7 +378,11 @@ Under the hood, both `installer.sh` and direct bench tasks rely on focused helpe
 ```text
 ultio-project/
 ├── .devcontainer/
+<<<<<<< Updated upstream
 │   ├── Dockerfile                  # Extended Frappe Bench image (glab, pre-commit, git optimizations)
+=======
+│   ├── Dockerfile                  # Extended Frappe Bench image (glab, gh, pre-commit, git optimizations)
+>>>>>>> Stashed changes
 │   ├── devcontainer.json           # Dev container definition, lifecycle scripts & AI/dev extensions
 │   ├── docker-compose.yml          # MariaDB, Redis (cache & queue), and Frappe bench custom build
 │   └── scripts/
@@ -407,7 +442,11 @@ Configured through `.devcontainer/docker-compose.yml`:
 
 | Service | Image | Internal Host | Ports | Credentials / Configuration |
 |---|---|---|---|---|
+<<<<<<< Updated upstream
 | **Frappe Bench** | Custom (`.devcontainer/Dockerfile` based on `frappe/bench:v5.27.0`) | `frappe` | `8000-8005`, `9000-9005` | Pre-configured with `glab`, `pre-commit`, Git HTTP tuning, SSH signing, and AI extensions |
+=======
+| **Frappe Bench** | Custom (`.devcontainer/Dockerfile` based on `frappe/bench:v5.27.0`) | `frappe` | `8000-8005`, `9000-9005` | Pre-configured with `glab`, `gh`, `pre-commit`, Git HTTP tuning, SSH signing, and AI extensions |
+>>>>>>> Stashed changes
 | **MariaDB** | `mariadb:10.6` | `mariadb` | `3306` | Root user: `root`, Password: `123` |
 | **Redis Cache** | `redis:alpine` | `redis-cache` | `6379` | `redis://redis-cache:6379` |
 | **Redis Queue** | `redis:alpine` | `redis-queue` | `6379` | `redis://redis-queue:6379` (Worker queues & Socket.IO) |
