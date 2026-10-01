@@ -2,22 +2,6 @@ name: Docker Image CI
 
 on:
   push:
-<<<<<<< Updated upstream
-    branches: [ "develop" ]
-  pull_request:
-    branches: [ "develop" ]
-
-jobs:
-
-  build:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-=======
     branches:
       - develop
       - main
@@ -50,4 +34,3 @@ jobs:
           echo "==> Building Docker image from .devcontainer..."
           cd .devcontainer
           docker compose build --progress=plain
->>>>>>> Stashed changes
