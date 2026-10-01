@@ -2,6 +2,9 @@
   "name": "Frappe Bench",
   "forwardPorts": [8000, 9000, 6787],
   "remoteUser": "frappe",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
   "customizations": {
     "vscode": {
       "extensions": [
