@@ -72,6 +72,13 @@ checkout_branch() {
     log_ok "On branch $branch"
 }
 
+checkout_all_apps() {
+    local app branch
+    while IFS=$'\t' read -r app branch; do
+        checkout_branch "$app" "$branch"
+    done < <(json_app_pairs "$CONFIG_FILE")
+}
+
 install_app() {
     local app="$1"
     local branch="$2"
@@ -79,8 +86,6 @@ install_app() {
     echo -e "\n${YELLOW}────────────────────────────────────────${NC}"
     log_info "Installing: $app @ $branch"
     echo -e "${YELLOW}────────────────────────────────────────${NC}"
-
-    checkout_branch "$app" "$branch"
 
     if ! bench --site "$SITE_NAME" install-app "$app"; then
         log_err "Failed to install $app"
@@ -156,14 +161,6 @@ create_site() {
         return
     fi
 
-    local frappe_branch
-    frappe_branch="$(json_app_branch "$CONFIG_FILE" "frappe")"
-    if [[ -z "$frappe_branch" ]]; then
-        log_err "frappe app missing in $CONFIG_FILE"
-        exit 1
-    fi
-    checkout_branch "frappe" "$frappe_branch"
-
     log_info "Creating site: $SITE_NAME (db_type=$DB_TYPE)"
 
     local cmd=()
@@ -214,6 +211,7 @@ echo -e "\n${GREEN}════════════════════�
 log_ok "Processing config: $(basename "$CONFIG_FILE")"
 echo -e "${GREEN}════════════════════════════════════════${NC}"
 
+checkout_all_apps
 create_site
 install_all_apps
 

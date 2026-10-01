@@ -41,6 +41,15 @@ init_bench() {
     log_ok "Bench initialised."
 }
 
+setup_node_requirements() {
+    pushd "$BENCH_PATH" > /dev/null
+
+    log_info "Installing Frappe Node dependencies..."
+    bench setup requirements --node frappe
+
+    popd > /dev/null
+}
+
 start_bench() {
     pushd "$BENCH_PATH" > /dev/null
 

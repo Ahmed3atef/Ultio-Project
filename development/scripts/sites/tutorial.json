@@ -13,9 +13,25 @@
     "chart_of_accounts": "Standard"
   },
   "apps": [
-    { "name": "frappe",  "branch": "v15.107.2" },
-    { "name": "erpnext", "branch": "v15.107.0" },
-    { "name": "hrms",    "branch": "v15.50.0"  },
-    { "name":"airplane_mode",  "branch":"main"}
+    {
+      "name": "frappe",
+      "branch": "v15.107.2"
+    },
+    {
+      "name": "erpnext",
+      "branch": "v15.107.0"
+    },
+    {
+      "name": "hrms",
+      "branch": "v15.50.0"
+    },
+    {
+      "name": "airplane_mode",
+      "branch": "main"
+    },
+    {
+      "name": "commit",
+      "branch": "main"
+    }
   ]
 }

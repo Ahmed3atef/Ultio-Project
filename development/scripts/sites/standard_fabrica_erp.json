@@ -13,19 +13,89 @@
     "chart_of_accounts": "Standard"
   },
   "apps": [
-    { "name": "frappe",               "branch": "v15.64.0"   },
-    { "name": "erpnext",              "branch": "v15.64.0"   },
-    { "name": "hrms",                 "branch": "v15.47.1"   },
-    { "name": "erp_fabrica",          "branch": "stage"      },
-    { "name": "fabrica_pwa",          "branch": "main"       },
-    { "name": "hr_fabrica",           "branch": "develop"    },
-    { "name": "mail_job_application", "branch": "master"     },
-    { "name": "lending",              "branch": "version-15" },
-    { "name": "salary_tax_eg",        "branch": "main"       },
-    { "name": "zk_bio_device",        "branch": "master"     },
-    { "name": "fabrica_accounting",   "branch": "develop"    },
-    { "name": "fabrica_construction", "branch": "master"     },
-    { "name": "crm_integration",      "branch": "develop"    },
-    { "name": "learning_center",      "branch": "main"       }
+    {
+      "name": "frappe",
+      "branch": "v15.64.0"
+    },
+    {
+      "name": "erpnext",
+      "branch": "v15.64.0"
+    },
+    {
+      "name": "hrms",
+      "branch": "v15.47.1"
+    },
+    {
+      "name": "erp_fabrica",
+      "branch": "stage"
+    },
+    {
+      "name": "fabrica_pwa",
+      "branch": "main"
+    },
+    {
+      "name": "hr_fabrica",
+      "branch": "develop"
+    },
+    {
+      "name": "mail_job_application",
+      "branch": "master"
+    },
+    {
+      "name": "lending",
+      "branch": "version-15"
+    },
+    {
+      "name": "salary_tax_eg",
+      "branch": "main"
+    },
+    {
+      "name": "zk_bio_device",
+      "branch": "master"
+    },
+    {
+      "name": "fabrica_accounting",
+      "branch": "develop"
+    },
+    {
+      "name": "fabrica_construction",
+      "branch": "master"
+    },
+    {
+      "name": "crm_integration",
+      "branch": "develop"
+    },
+    {
+      "name": "fabrica_factoring",
+      "branch": "develop"
+    },
+    {
+      "name": "fabrica_leasing",
+      "branch": "develop"
+    },
+    {
+      "name": "learning_center",
+      "branch": "main"
+    },
+    {
+      "name": "handover",
+      "branch": "develop"
+    },
+    {
+      "name": "wiki",
+      "branch": "v2.0.1"
+    },
+    {
+      "name": "documentation_upkeep_client",
+      "branch": "develop"
+    },
+    {
+      "name": "commit",
+      "branch": "main"
+    },
+    {
+      "name": "fabrica_commit",
+      "branch": "main"
+    }
   ]
 }

@@ -1,2 +1,5 @@
 development/frappe-bench/*
 development/backups/*
+development/backup/*
+development/doc/*
+development/docs/*
