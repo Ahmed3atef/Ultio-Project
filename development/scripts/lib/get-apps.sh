@@ -8,7 +8,7 @@
 #   - name set, no url  -> `bench get-app NAME --branch BRANCH`, then expand
 #                          the refspec and fetch all branches/tags so later
 #                          site scripts can checkout any configured ref.
-#   - url set           -> clone the repo (default branch), pip-install it,
+#   - url set           -> clone the repo (default branch), uv-install it,
 #                          register it in sites/apps.txt, then fetch all refs.
 #   - folder already exists -> only fix the refspec and fetch all refs.
 
@@ -83,23 +83,40 @@ expand_remote_refs() {
     remote_name="$(remote_name_for "$app_dir")"
     remote_refspec="$(git -C "$app_dir" config --get "remote.${remote_name}.fetch" || true)"
 
-    if [[ "$remote_refspec" != "+refs/heads/*:refs/remotes/${remote_name}/*" ]]; then
-        log_info "Fixing refspec: '$remote_refspec' -> '+refs/heads/*:refs/remotes/${remote_name}/*'"
-        git -C "$app_dir" config "remote.${remote_name}.fetch" "+refs/heads/*:refs/remotes/${remote_name}/*"
+    if [[ "$folder_name" == "frappe" || "$folder_name" == "erpnext" ]]; then
+        local current_branch
+        current_branch="$(git -C "$app_dir" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "version-15")"
+        [[ "$current_branch" == "HEAD" ]] && current_branch="version-15"
+
+        if [[ "$remote_refspec" == "+refs/heads/*:refs/remotes/${remote_name}/*" ]]; then
+            log_info "Restricting refspec for $folder_name to $current_branch to prevent huge downloads"
+            git -C "$app_dir" config "remote.${remote_name}.fetch" "+refs/heads/${current_branch}:refs/remotes/${remote_name}/${current_branch}"
+        fi
     else
-        log_ok "Refspec already correct."
+        if [[ "$remote_refspec" != "+refs/heads/*:refs/remotes/${remote_name}/*" ]]; then
+            log_info "Fixing refspec: '$remote_refspec' -> '+refs/heads/*:refs/remotes/${remote_name}/*'"
+            git -C "$app_dir" config "remote.${remote_name}.fetch" "+refs/heads/*:refs/remotes/${remote_name}/*"
+        else
+            log_ok "Refspec already correct."
+        fi
     fi
 
-    git -C "$app_dir" fetch "$remote_name" --tags
+    git -C "$app_dir" fetch "$remote_name" --tags --depth=1
     log_ok "All branches and tags fetched for $folder_name"
 }
 
-# register_app_in_bench FOLDER_NAME — pip install the app and add it to apps.txt.
+# register_app_in_bench FOLDER_NAME — install the app and add it to apps.txt.
 register_app_in_bench() {
     local folder_name="$1"
+    local app_path="$BENCH_DIR/apps/$folder_name"
 
-    log_info "Installing $folder_name into bench (pip)..."
-    bench pip install -e "apps/$folder_name"
+    log_info "Installing $folder_name into bench (uv)..."
+    uv pip install --python "$BENCH_DIR/env/bin/python" --editable "$app_path" --no-deps
+
+    if [[ -f "$app_path/requirements.txt" ]]; then
+        log_info "Installing $folder_name requirements (uv)..."
+        uv pip install --python "$BENCH_DIR/env/bin/python" --requirement "$app_path/requirements.txt" --no-deps
+    fi
 
     if grep -qx "$folder_name" "$APPS_TXT" 2>/dev/null; then
         log_info "'$folder_name' already in apps.txt. Skipping."
@@ -119,7 +136,8 @@ fetch_existing_app() {
     local app_dir="$1"
     local folder_name="$2"
 
-    log_info "App '$folder_name' already exists. Fixing refspec and fetching all branches/tags..."
+    log_info "App '$folder_name' already exists. Registering it and fetching all branches/tags..."
+    register_app_in_bench "$folder_name"
     expand_remote_refs "$app_dir" "$folder_name"
 }
 
@@ -129,11 +147,11 @@ install_by_name() {
     local app_dir="$APPS_DIR/$app_name"
 
     if [[ -n "$branch" ]]; then
-        log_info "Running: bench get-app $app_name --branch $branch"
-        bench get-app "$app_name" --branch "$branch"
+        log_info "Running: bench get-app $app_name --branch $branch --resolve-deps"
+        bench get-app "$app_name" --branch "$branch" --resolve-deps
     else
-        log_info "Running: bench get-app $app_name"
-        bench get-app "$app_name"
+        log_info "Running: bench get-app $app_name --resolve-deps"
+        bench get-app "$app_name" --resolve-deps
     fi
 
     log_info "Expanding refspec to fetch all branches and tags..."

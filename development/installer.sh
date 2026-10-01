@@ -78,6 +78,7 @@ main() {
     echo -e "${GREEN}════════════════════════════════════════${NC}\n"
 
     init_bench
+    setup_node_requirements
 
     case "$SITE_MODE" in
         configured)

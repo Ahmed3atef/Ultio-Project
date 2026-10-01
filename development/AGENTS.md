@@ -45,3 +45,44 @@
 - After conflict resolution, verify the resulting commit diff includes only the intended cherry-picked delta and no unrelated local changes.
 - When the user asks for a commit message, format it as a title line followed by `-` prefixed points.
 - Commit-message points must describe the actual changes since the last commit, not the conversational back-and-forth, retries, or discarded attempts.
+- Do not commit any changes automatically. Always wait for explicit user validation and approval before making a commit.
+
+## Frappe Implementation Guidelines
+
+Instead of relying on hardcoded rules, always consult the specific Frappe developer skills stored in the `.codex/skills/` directory depending on the context of your task. Available skills include:
+- `frappe-doc-first-implementation` (General best practices and workflow)
+- `frappe-client-scripts` (JS client-side behavior)
+- `frappe-server-hooks` (Python server-side document lifecycle)
+- `frappe-query-builder` (Database interaction)
+- `frappe-rest-api` (Whitelisted endpoints)
+
+If a relevant skill exists in `.codex/skills/`, you must read its `SKILL.md` instructions using `view_file` before proceeding with the implementation.
+
+## Subagent Workflow (Frappe/ERPNext)
+
+Scale subagent usage dynamically based on task complexity to conserve quota:
+
+### Simple Tasks (0 subagents — work inline)
+Single-concern changes: 1-2 file edits, bug fixes, config tweaks, removing dead code, adding a parameter.
+- Do all research, coding, and verification yourself in the main conversation.
+
+### Medium Tasks (2-3 subagents — selective roles)
+Multi-file features with 2-3 distinct concerns (e.g., server + client, or server + tests).
+- Spawn only the roles actually needed from the list below.
+- Prefer combining Validate into the coding subagent's scope when the change is small enough.
+
+### Complex Tasks (up to 5 subagents — full distribution)
+Large features, cross-app changes, architectural rework, or tasks touching 4+ files across layers.
+- Distribute across all applicable roles.
+
+### Available Roles
+- **Search/Research**: Explore the codebase, read Frappe framework documentation, find existing patterns.
+- **Code (Server-Side)**: Implement Python logic, server hooks, and queries.
+- **Code (Client-Side)**: Implement JS client scripts, UI components, and forms.
+- **Validate**: Targeted validation against Frappe clean code principles and security rules.
+- **Verify**: Run simulated or actual tests and ensure the user-facing outcome is achieved without side effects.
+
+### Quota-Saving Rules
+- Never spawn a subagent whose entire job can be done in a single tool call from the main conversation.
+- If a subagent errors out (e.g., quota exhaustion), absorb its remaining work inline instead of retrying.
+- Prefer `flash` model for research-only subagents; use `inherit` for coding subagents.

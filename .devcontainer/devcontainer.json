@@ -10,7 +10,12 @@
         "grapecity.gc-excelviewer",
         "mtxr.sqltools",
         "mtxr.sqltools-driver-mysql",
-        "visualstudioexptteam.vscodeintellicode"
+        "visualstudioexptteam.vscodeintellicode",
+        "Google.google-antigravity",
+        "openai.chatgpt",
+        "eamodio.gitlens",
+        "anthropic.claude-code",
+        "bierner.markdown-mermaid"
       ],
       "settings": {
         "terminal.integrated.profiles.linux": {
@@ -40,11 +45,15 @@
       }
     }
   },
+  "containerEnv": {
+    "UV_LINK_MODE": "copy"
+  },
   "dockerComposeFile": "./docker-compose.yml",
   "service": "frappe",
   "workspaceFolder": "/workspace/development",
   "shutdownAction": "stopCompose",
-  "postCreateCommand": "uv tool install pre-commit && git config --global user.signingkey /home/frappe/.ssh/id_ed25519.pub && git config --global gpg.format ssh && git config --global commit.gpgsign true && git config --global gpg.ssh.allowedSignersFile /home/frappe/.ssh/allowed_signers && echo \"$(git config --global user.email) namespaces=\\\"git\\\" $(cat /home/frappe/.ssh/id_ed25519.pub)\" > /home/frappe/.ssh/allowed_signers && if [ -f /home/frappe/.ssh/id_ed25519 ] && ! ssh-keygen -y -P \"\" -f /home/frappe/.ssh/id_ed25519 >/dev/null 2>&1; then (ssh-agent -s > /home/frappe/.ssh-agent.env && eval \"$(cat /home/frappe/.ssh-agent.env)\" && (grep -qF \"source /home/frappe/.ssh-agent.env\" /home/frappe/.bashrc || echo \"source /home/frappe/.ssh-agent.env\" >> /home/frappe/.bashrc) && (ssh-add /home/frappe/.ssh/id_ed25519 < /dev/tty 2>/dev/null || echo \"SSH key is passphrase-protected: run 'ssh-add ~/.ssh/id_ed25519' in your terminal to unlock it.\")) || true; else echo \"SSH key not found or not passphrase-protected - skipping ssh-agent setup.\"; fi",
+  "postCreateCommand": "bash /usr/local/bin/devcontainer-post-create.sh || bash /workspace/.devcontainer/scripts/post-create.sh",
+  "postStartCommand": "bash /usr/local/bin/devcontainer-post-start.sh || bash /workspace/.devcontainer/scripts/post-start.sh",
   "mounts": [
     "source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/home/frappe/.ssh,type=bind,consistency=cached"
   ]
