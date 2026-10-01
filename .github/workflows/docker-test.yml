@@ -1,0 +1,117 @@
+name: docker-test
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+
+jobs:
+  test-containers:
+    name: Run & Validate Containers
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create SSH directory for container mount
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+      - name: Validate Dev Container & Script JSON Configurations
+        run: |
+          echo "==> Validating .devcontainer/devcontainer.json..."
+          python3 -m json.tool .devcontainer/devcontainer.json > /dev/null
+
+          echo "==> Validating development/scripts/apps/apps.json..."
+          python3 -m json.tool development/scripts/apps/apps.json > /dev/null
+
+          echo "==> Validating all development/scripts/sites/*.json..."
+          for f in development/scripts/sites/*.json; do
+            [ -f "$f" ] || continue
+            python3 -m json.tool "$f" > /dev/null
+            echo "  [OK] $f"
+          done
+
+      - name: Start Dev Container Stack (Docker Compose)
+        run: |
+          echo "==> Starting containers via Docker Compose..."
+          cd .devcontainer
+          docker compose up -d --build
+          docker compose ps
+
+      - name: Verify Services Health & Readiness
+        run: |
+          echo "==> Waiting for MariaDB..."
+          timeout 60s bash -c '
+            until docker compose -f .devcontainer/docker-compose.yml exec -T mariadb mysqladmin ping -h localhost -uroot -p123 --silent 2>/dev/null; do
+              echo "Waiting for MariaDB..."
+              sleep 2
+            done
+          '
+          echo "MariaDB is ready."
+
+          echo "==> Verifying Redis Cache & Queue..."
+          docker compose -f .devcontainer/docker-compose.yml exec -T redis-cache redis-cli ping
+          docker compose -f .devcontainer/docker-compose.yml exec -T redis-queue redis-cli ping
+
+      - name: Test Pre-installed Tools in Frappe Container (glab, gh, uv, pre-commit)
+        run: |
+          echo "==> Verifying installed tooling inside container..."
+          docker compose -f .devcontainer/docker-compose.yml exec -T frappe bash -c "
+            set -eu
+            echo 'Checking Git:' && git --version
+            echo 'Checking GitLab CLI:' && glab --version
+            echo 'Checking GitHub CLI:' && gh --version
+            echo 'Checking pre-commit:' && pre-commit --version
+            echo 'Checking uv:' && uv --version
+            echo 'Checking Python:' && python3 --version
+            echo 'Checking Node:' && node -v
+          "
+
+      - name: Test Dev Container Lifecycle Scripts
+        run: |
+          echo "==> Testing devcontainer-post-create.sh in container..."
+          docker compose -f .devcontainer/docker-compose.yml exec -T frappe bash /usr/local/bin/devcontainer-post-create.sh
+
+          echo "==> Testing devcontainer-post-start.sh in container..."
+          docker compose -f .devcontainer/docker-compose.yml exec -T frappe bash /usr/local/bin/devcontainer-post-start.sh
+
+      - name: Test Shell Scripts & Installer
+        run: |
+          echo "==> Testing syntax of all shell scripts (bash -n)..."
+          docker compose -f .devcontainer/docker-compose.yml exec -T frappe bash -c "
+            set -eu
+            find /workspace -name '*.sh' -exec bash -n {} +
+            echo 'All shell scripts syntax validated.'
+          "
+
+          echo "==> Testing installer and script modules..."
+          docker compose -f .devcontainer/docker-compose.yml exec -T frappe bash -c "
+            set -eu
+            cd /workspace/development
+
+            # Verify installer entrypoint syntax
+            bash -n installer.sh
+            bash -n scripts/switch-site-app-refs.sh
+
+            # Test configuration parsing & helper functions
+            bash -c 'source scripts/lib/common.sh && json_field scripts/sites/tutorial.json site_name'
+            bash -c 'export GET_APPS_CONFIG=scripts/apps/apps.json; source scripts/lib/apps.sh && app_label_rows'
+            bash -c 'export SITES_DIR=scripts/sites; source scripts/lib/sites.sh && site_config_rows'
+            echo 'Installer components and script helpers verified successfully.'
+          "
+
+      - name: Teardown Dev Container Stack
+        if: always()
+        run: |
+          cd .devcontainer
+          docker compose down -v

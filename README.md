@@ -36,7 +36,7 @@ bash installer.sh
 ```
 
 - **Bench Configuration**: Press `Enter` through the prompts to keep standard defaults (`frappe-bench`, `version-15`, `mariadb`, admin password `admin`).
-- **Site Mode**: Select your target site (e.g. `coverage.json`, `alqamzi.json`, or `clean.localhost`).
+- **Site Mode**: Select your target site (e.g. `tutorial.json` or `clean.localhost`).
 - The installer automatically initializes the bench, fetches Git repositories, creates the site in MariaDB, executes automated headless setup, runs migrations, and compiles frontend assets.
 
 ### 3. Access Your Site
@@ -173,10 +173,10 @@ Pass a site profile name, JSON file name, or explicit file path:
 
 ```bash
 # Pass config name directly
-bash scripts/switch-site-app-refs.sh alqamzi
+bash scripts/switch-site-app-refs.sh {site}
 
 # Pass filename with extension
-bash scripts/switch-site-app-refs.sh aljar.json
+bash scripts/switch-site-app-refs.sh {site}.json
 
 # Pass relative or absolute file path
 bash scripts/switch-site-app-refs.sh scripts/sites/coverage.json
@@ -206,13 +206,27 @@ bench build
 
 ## 🦊 GitLab CLI (`glab`) & Merge Requests
 
-The container includes the official **GitLab CLI (`glab`)** pre-installed and ready to interact with `git.fabrica-dev.com`.
+The container includes the official **GitLab CLI (`glab`)** pre-installed and ready to interact with GitLab (`gitlab.com`).
 
 ### 1. Log in to `glab`
 
-#### Step 1: Create a Personal Access Token (PAT)
+#### Interactive Login (Recommended)
+Run the interactive authentication command:
+```bash
+glab auth login
+```
+Follow the interactive prompts:
+- What GitLab instance do you want to log in to? **GitLab.com**
+- How would you like to authenticate? **Token** (or Web)
+- Paste your token.
+
+---
+
+#### Alternative: Token via Personal Access Token (PAT)
+
+##### Step 1: Create a Personal Access Token (PAT)
 1. Open your browser and go to:  
-   **`https://git.fabrica-dev.com/-/user_settings/personal_access_tokens`**  
+   **`https://gitlab.com/-/user_settings/personal_access_tokens`**  
    *(Or click your avatar in GitLab &rarr; **Preferences** &rarr; **Access Tokens**)*
 2. Set a name (e.g., `glab-cli`).
 3. Check the following scopes:
@@ -223,33 +237,32 @@ The container includes the official **GitLab CLI (`glab`)** pre-installed and re
 
 ---
 
-#### Step 2: Log in using the Token flag
-Pass the token directly via the `--token` flag to skip the OAuth Application prompt:
+##### Step 2: Log in using the Token flag
+Pass the token directly via the `--token` flag to skip interactive prompts:
 
 ```bash
-glab auth login --hostname git.fabrica-dev.com --token <YOUR_COPIED_TOKEN>
+glab auth login --token <YOUR_COPIED_TOKEN>
 ```
 
 Alternatively, you can pass it via `stdin`:
 
 ```bash
-glab auth login --hostname git.fabrica-dev.com --stdin
+glab auth login --stdin
 ```
 *(Paste your token and press **Enter**)*
 
 ---
 
-#### Step 3: Verify Authentication
+##### Step 3: Verify Authentication
 Check the authentication status:
 
 ```bash
-glab auth status --hostname git.fabrica-dev.com
+glab auth status
 ```
 
 > **Tip for Docker / Bench environments:**  
-> You can also authenticate without writing configuration files by setting environment variables in your `~/.bashrc`:
+> You can also authenticate without writing configuration files by setting environment variables in your terminal session or `~/.bashrc`:
 > ```bash
-> export GITLAB_HOST="git.fabrica-dev.com"
 > export GITLAB_TOKEN="<YOUR_COPIED_TOKEN>"
 > ```
 
@@ -262,7 +275,7 @@ To create two Merge Requests (one targeting `develop` and one targeting `main`) 
 #### Step 1: Make sure you are in the app folder and push your branches
 First, navigate to your app directory:
 ```bash
-cd /workspace/development/frappe-bench/apps/handover
+cd /workspace/development/frappe-bench/apps/<your-app>
 ```
 
 Make sure both branches are pushed to GitLab:
@@ -471,8 +484,8 @@ To start debugging:
 ## ❓ Troubleshooting
 
 ### 1. Permission Denied (publickey) on Private Repositories
-- **Symptom**: `git clone git@git.fabrica-dev.com:...` fails.
-- **Solution**: Confirm SSH access on your host with `ssh -T git@git.fabrica-dev.com`. Make sure your key is in `~/.ssh/` before the Dev Container is built, as the container mounts this directory into `/home/frappe/.ssh`.
+- **Symptom**: `git clone git@gitlab.com:...` fails.
+- **Solution**: Confirm SSH access on your host with `ssh -T git@gitlab.com`. Make sure your key is in `~/.ssh/` before the Dev Container is built, as the container mounts this directory into `/home/frappe/.ssh`.
 
 ### 2. Browser Displays "Site Not Found"
 - **Symptom**: Opening `http://<site-name>:8000` shows Frappe's 404 page.
