@@ -2,6 +2,7 @@ name: Docker Image CI
 
 on:
   push:
+<<<<<<< Updated upstream
     branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
@@ -16,3 +17,37 @@ jobs:
     - uses: actions/checkout@v4
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+=======
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & Validate Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate Dev Container & Compose Configuration
+        run: |
+          echo "==> Validating .devcontainer/devcontainer.json..."
+          python3 -m json.tool .devcontainer/devcontainer.json > /dev/null
+
+          echo "==> Validating .devcontainer/docker-compose.yml..."
+          cd .devcontainer
+          docker compose config
+
+      - name: Build Docker Image
+        run: |
+          echo "==> Building Docker image from .devcontainer..."
+          cd .devcontainer
+          docker compose build --progress=plain
+>>>>>>> Stashed changes
