@@ -417,31 +417,6 @@ ultio-project/
 
 ---
 
-## 📋 Included Site Profiles (`scripts/sites/`)
-
-Each JSON file in `development/scripts/sites/` defines a site name, setup wizard parameters, and an ordered list of apps and their required branches/tags.
-
-| Config File | Site Name | Included Custom Applications |
-|---|---|---|
-| `aljar.json` | `aljar.localhost` | `erp_fabrica`, `hr_fabrica`, `fabrica_accounting`, `crm_integration`, `aljar_system`, `learning_center` |
-| `alqamzi.json` | `alqamzi.localhost` | `erp_fabrica`, `hr_fabrica`, `fabrica_accounting`, `alqamzi_system`, `fabrica_factoring`, `fabrica_leasing`, `child_table_pagination`, `learning_center` |
-| `biography.json` | `biography.localhost` | `erp_fabrica`, `fabrica_accounting`, `crm_integration`, `biography_erp`, `learning_center` |
-| `coverage.json` | `coverage.localhost` | `persona`, `erp_fabrica`, `fabrica_pos_awesome`, `coverage_erp`, `learning_center` |
-| `egyproperty.json` | `egyproperty.localhost` | `alerts`, `zk_bio_device`, `sip_calls`, `insights`, `text_to_filters`, `egyproperty`, `realestate_crm`, `persona` |
-| `el_masria.json` | `el_masria.localhost` | `erp_fabrica`, `hr_fabrica`, `bio_time_software`, `salary_tax_eg`, `elmasria_erp`, `learning_center` |
-| `fabrica.json` | `fabrica.localhost` | `erp_fabrica`, `fabrica_system`, `print_designer`, `hr_fabrica`, `fabrica_pm`, `learning_center` |
-| `imarrae.json` | `imarrae.localhost` | `erp_fabrica`, `salary_tax_eg`, `zk_bio_device`, `crm_integration`, `imarrae_system`, `learning_center` |
-| `kunouz.json` | `kunouz.localhost` | `erp_fabrica`, `hr_fabrica`, `bio_time_software`, `kunouz_erp`, `learning_center` |
-| `saoud.json` | `saoud.localhost` | `erp_fabrica`, `hr_fabrica`, `crm_integration`, `saoudurban_erp`, `learning_center` |
-| `standard_fabrica_erp.json` | `standard_fabrica_erp.localhost` | Standard Fabrica baseline (`fabrica_accounting`, `fabrica_construction`, `crm_integration`) |
-| `tutorial.json` | `tutorial.localhost` | Lightweight learning sandbox (`airplane_mode`, `commit`) |
-| `uc.json` | `uc.localhost` | `erp_fabrica`, `hr_fabrica`, `bio_time_software`, `ucdevelopement_system`, `learning_center` |
-| `vie_communities.json` | `vie_communities.localhost` | `erp_fabrica`, `hr_fabrica`, `vie_system`, `learning_center` |
-
-*Standard sites conclude with the maintenance stack:* `handover` (`develop`) → `wiki` (`v2.0.1`) → `documentation_upkeep_client` (`develop`) → `commit` (`main`) → `fabrica_commit` (`main`).
-
----
-
 ## 🔌 Container Infrastructure & Stack
 
 Configured through `.devcontainer/docker-compose.yml`:
