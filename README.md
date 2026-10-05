@@ -43,7 +43,7 @@ bash installer.sh
 
 When `bench start` is running:
 
-- **Browser URL**: `http://<site-name>:8000` (e.g. `http://coverage.localhost:8000` or `http://alqamzi.localhost:8000`)
+- **Browser URL**: `http://<site-name>:8000` (e.g. `http://tutorial.localhost:8000`)
 - **Username**: `Administrator`
 - **Password**: `admin` (or the password configured during setup)
 
