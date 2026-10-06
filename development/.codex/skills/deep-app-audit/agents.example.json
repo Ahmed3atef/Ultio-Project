@@ -1,0 +1,75 @@
+{
+  "agents": {
+    "agy": {
+      "cmd": [
+        "agy",
+        "-p",
+        "{prompt}",
+        "--dangerously-skip-permissions",
+        "--add-dir",
+        "{target}",
+        "--add-dir",
+        "{bench}",
+        "--add-dir",
+        "{skill_dir}",
+        "{model_args}"
+      ],
+      "modelArgs": ["--model", "{model}"],
+      "env": {
+        "PATH": "/home/ahemd_atef/.gemini/bin:/usr/local/bin:/usr/bin:/bin"
+      },
+      "timeout": 3600
+    },
+    "claude": {
+      "cmd": [
+        "claude",
+        "-p",
+        "{model_args}",
+        "--add-dir",
+        "{target}",
+        "{bench}",
+        "{skill_dir}",
+        "--allowedTools",
+        "Read,Grep,Glob,Write,Edit,Bash(rg:*),Bash(jq:*),Bash(curl:*),Bash(git -C {target} log:*),Bash(git -C {target} show:*),Bash(bench --site {site}:*),Bash(bench:*),Bash(python3:*)"
+      ],
+      "modelArgs": ["--model", "{model}"],
+      "timeout": 3600
+    },
+    "codex": {
+      "cmd": [
+        "codex",
+        "exec",
+        "{model_args}",
+        "--sandbox",
+        "workspace-write",
+        "-c",
+        "sandbox_workspace_write.network_access=true",
+        "--add-dir",
+        "{target}",
+        "--add-dir",
+        "{bench}",
+        "--add-dir",
+        "{skill_dir}",
+        "--add-dir",
+        "{bench}/logs",
+        "--add-dir",
+        "{bench}/sites/{site}",
+        "-"
+      ],
+      "modelArgs": ["--model", "{model}"],
+      "timeout": 3600
+    },
+    "opencode": {
+      "cmd": ["opencode", "run", "{model_args}", "{prompt}"],
+      "modelArgs": ["--model", "{model}"],
+      "timeout": 3600
+    }
+  },
+  "roles": {
+    "default": {"agent": "agy", "model": ""},
+    "scan": {"agent": "agy", "model": ""},
+    "check": {"agent": "agy", "model": ""},
+    "verify": {"agent": "agy", "model": ""},
+    "report": {"agent": "agy", "model": ""}
+  }
+}
